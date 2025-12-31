@@ -67,6 +67,7 @@ const GameSandbox: FC = () => {
   });
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const saved = localStorage.getItem("pro_juggler_highscore");
     if (saved) {
       setHighScore(parseInt(saved, 10));
