@@ -2,7 +2,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   Keypair,
   SystemProgram,
-  Transaction,
   TransactionMessage,
   TransactionSignature,
   VersionedTransaction,
@@ -23,7 +22,6 @@ export const SendTransaction: FC = () => {
 
     let signature: TransactionSignature = "";
     try {
-      // Create instructions to send, in this case a simple transfer
       const instructions = [
         SystemProgram.transfer({
           fromPubkey: publicKey,
@@ -52,7 +50,11 @@ export const SendTransaction: FC = () => {
       await connection.confirmTransaction({ signature, ...latestBlockhash }, "confirmed");
 
       console.log(signature);
-      notify({ type: "success", message: "Transaction successful!", txid: signature });
+      notify({
+        type: "success",
+        message: "Transaction successful!",
+        txid: signature,
+      });
     } catch (error: any) {
       notify({
         type: "error",
@@ -63,6 +65,7 @@ export const SendTransaction: FC = () => {
       console.log("error", `Transaction failed! ${error?.message}`, signature);
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey, connection, sendTransaction]);
 
   return (

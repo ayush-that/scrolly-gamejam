@@ -62,6 +62,7 @@ export const SendVersionedTransaction: FC = () => {
       console.log("error", `Transaction failed! ${error?.message}`, signature);
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey, connection, sendTransaction]);
 
   return (

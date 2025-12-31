@@ -51,7 +51,11 @@ export const SendVersionedTransaction: FC = () => {
       await connection.confirmTransaction({ signature, ...latestBlockhash }, "confirmed");
 
       console.log(signature);
-      notify({ type: "success", message: "Transaction successful!", txid: signature });
+      notify({
+        type: "success",
+        message: "Transaction successful!",
+        txid: signature,
+      });
     } catch (error: any) {
       notify({
         type: "error",
@@ -62,7 +66,7 @@ export const SendVersionedTransaction: FC = () => {
       console.log("error", `Transaction failed! ${error?.message}`, signature);
       return;
     }
-  }, [publicKey, notify, connection, sendTransaction]);
+  }, [publicKey, connection, sendTransaction]);
 
   return (
     <div className="flex flex-row justify-center">

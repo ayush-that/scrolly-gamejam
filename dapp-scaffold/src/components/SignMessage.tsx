@@ -29,6 +29,7 @@ export const SignMessage: FC = () => {
       notify({ type: "error", message: `Sign Message failed!`, description: error?.message });
       console.log("error", `Sign Message failed! ${error?.message}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey, signMessage]);
 
   return (
