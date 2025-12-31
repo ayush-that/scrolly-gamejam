@@ -1,21 +1,16 @@
 {
   "name": "solana-dapp-next",
   "version": "0.2.0",
-  "author": "Solana Maintainers <maintainers@solana.foundation>",
-  "license": "MIT",
   "private": false,
+  "license": "MIT",
+  "author": "Solana Maintainers <maintainers@solana.foundation>",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "oxlint --write ."
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md}": [
-      "prettier --write"
-    ]
+    "format": "oxfmt ."
   },
   "dependencies": {
     "@heroicons/react": "^1.0.5",
@@ -42,6 +37,7 @@
     "autoprefixer": "^10.4.2",
     "eslint": "8.7.0",
     "eslint-config-next": "^13.1.5",
+    "oxfmt": "^0.21.0",
     "postcss": "^8.4.5",
     "tailwindcss": "^3.2.4",
     "typescript": "^4.9.4"

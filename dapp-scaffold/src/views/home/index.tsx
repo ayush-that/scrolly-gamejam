@@ -22,18 +22,14 @@ const GameSandbox: FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [gameState, setGameState] = useState<"START" | "PLAYING" | "GAMEOVER">(
-    "START"
-  );
+  const [gameState, setGameState] = useState<"START" | "PLAYING" | "GAMEOVER">("START");
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [leaderboard, setLeaderboard] = useState<number[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [ballSkin, setBallSkin] = useState<
-    "classic" | "gold" | "neon" | "fire"
-  >("classic");
+  const [ballSkin, setBallSkin] = useState<"classic" | "gold" | "neon" | "fire">("classic");
 
   // Mutable Game State (Refs for loop)
   const stateRef = useRef({
@@ -99,8 +95,7 @@ const GameSandbox: FC = () => {
 
     const initAudio = () => {
       if (!state.audioCtx) {
-        state.audioCtx = new (window.AudioContext ||
-          (window as any).webkitAudioContext)();
+        state.audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
       if (state.audioCtx && state.audioCtx.state === "suspended") {
         state.audioCtx.resume();
@@ -175,7 +170,7 @@ const GameSandbox: FC = () => {
       w: number,
       h: number,
       c1: string,
-      c2: string
+      c2: string,
     ) => {
       const g = ctx.createLinearGradient(x, y, x, y + h);
       g.addColorStop(0, c1);
@@ -229,19 +224,11 @@ const GameSandbox: FC = () => {
       ctx.lineWidth = 6 * state.scale;
       ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.moveTo(
-        hipX + (foot === state.player.left ? -10 : 10) * state.scale,
-        hipY
-      );
+      ctx.moveTo(hipX + (foot === state.player.left ? -10 : 10) * state.scale, hipY);
       ctx.lineTo(foot.x, foot.y);
       ctx.stroke();
 
-      drawShoe(
-        foot.x,
-        foot.y,
-        state.player.footRadius,
-        Math.atan2(foot.vy, foot.vx)
-      );
+      drawShoe(foot.x, foot.y, state.player.footRadius, Math.atan2(foot.vy, foot.vx));
 
       if (state.gameState === "PLAYING" && foot === state.player.right) {
         ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
@@ -327,10 +314,7 @@ const GameSandbox: FC = () => {
         }
 
         let constrainedDy = Math.sqrt(
-          Math.max(
-            0,
-            Math.pow(maxRightLegLength, 2) - Math.pow(constrainedDx, 2)
-          )
+          Math.max(0, Math.pow(maxRightLegLength, 2) - Math.pow(constrainedDx, 2)),
         );
 
         if (dyR < 0) constrainedDy = -constrainedDy;
@@ -417,10 +401,7 @@ const GameSandbox: FC = () => {
           if (state.score > state.highScore) {
             state.highScore = state.score;
             setHighScore(state.score);
-            localStorage.setItem(
-              "pro_juggler_highscore",
-              state.score.toString()
-            );
+            localStorage.setItem("pro_juggler_highscore", state.score.toString());
           }
           if (state.score > 0) {
             const savedLb = localStorage.getItem("pro_juggler_leaderboard");
@@ -428,10 +409,7 @@ const GameSandbox: FC = () => {
             lb.push(state.score);
             lb.sort((a, b) => b - a);
             const top10 = lb.slice(0, 10);
-            localStorage.setItem(
-              "pro_juggler_leaderboard",
-              JSON.stringify(top10)
-            );
+            localStorage.setItem("pro_juggler_leaderboard", JSON.stringify(top10));
             setLeaderboard(top10);
           }
         }
@@ -480,14 +458,7 @@ const GameSandbox: FC = () => {
       }
 
       const pitchY = canvas.height * 0.8;
-      drawGradientRect(
-        0,
-        pitchY,
-        canvas.width,
-        canvas.height - pitchY,
-        "#2E7D32",
-        "#1B5E20"
-      );
+      drawGradientRect(0, pitchY, canvas.width, canvas.height - pitchY, "#2E7D32", "#1B5E20");
 
       ctx.fillStyle = "rgba(0,0,0,0.05)";
       const stripeWidth = 50 * state.scale;
@@ -495,10 +466,7 @@ const GameSandbox: FC = () => {
         ctx.beginPath();
         ctx.moveTo(i + stripeWidth * 0.5, pitchY);
         ctx.lineTo(i + stripeWidth * 1.5, pitchY);
-        ctx.lineTo(
-          i + stripeWidth + (canvas.width / 2 - (i + stripeWidth)) * 0.4,
-          canvas.height
-        );
+        ctx.lineTo(i + stripeWidth + (canvas.width / 2 - (i + stripeWidth)) * 0.4, canvas.height);
         ctx.lineTo(i + (canvas.width / 2 - i) * 0.4, canvas.height);
         ctx.fill();
       }
@@ -524,29 +492,24 @@ const GameSandbox: FC = () => {
           hipX - 35 * state.scale,
           hipY - 20 * state.scale,
           70 * state.scale,
-          45 * state.scale
+          45 * state.scale,
         );
 
         ctx.fillStyle = "rgba(0,0,0,0.2)";
-        ctx.fillRect(
-          hipX - 1 * state.scale,
-          hipY,
-          2 * state.scale,
-          25 * state.scale
-        );
+        ctx.fillRect(hipX - 1 * state.scale, hipY, 2 * state.scale, 25 * state.scale);
 
         ctx.fillStyle = "#fff";
         ctx.fillRect(
           hipX - 32 * state.scale,
           hipY - 20 * state.scale,
           5 * state.scale,
-          45 * state.scale
+          45 * state.scale,
         );
         ctx.fillRect(
           hipX + 27 * state.scale,
           hipY - 20 * state.scale,
           5 * state.scale,
-          45 * state.scale
+          45 * state.scale,
         );
 
         ctx.fillStyle = "#D32F2F";
@@ -557,14 +520,14 @@ const GameSandbox: FC = () => {
             hipY - 85 * state.scale,
             64 * state.scale,
             75 * state.scale,
-            8
+            8,
           );
         } else {
           ctx.rect(
             hipX - 32 * state.scale,
             hipY - 85 * state.scale,
             64 * state.scale,
-            75 * state.scale
+            75 * state.scale,
           );
         }
         ctx.fill();
@@ -578,24 +541,12 @@ const GameSandbox: FC = () => {
 
         ctx.fillStyle = "#e0ac69";
         ctx.beginPath();
-        ctx.arc(
-          hipX,
-          hipY - 95 * state.scale,
-          20 * state.scale,
-          0,
-          Math.PI * 2
-        );
+        ctx.arc(hipX, hipY - 95 * state.scale, 20 * state.scale, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = "#212121";
         ctx.beginPath();
-        ctx.arc(
-          hipX,
-          hipY - 98 * state.scale,
-          22 * state.scale,
-          Math.PI,
-          Math.PI * 2.2
-        );
+        ctx.arc(hipX, hipY - 98 * state.scale, 22 * state.scale, Math.PI, Math.PI * 2.2);
         ctx.fill();
 
         ctx.save();
@@ -693,10 +644,7 @@ const GameSandbox: FC = () => {
 
         if (state.ball.y < -state.ball.radius) {
           ctx.save();
-          ctx.translate(
-            Math.min(Math.max(state.ball.x, 30), canvas.width - 30),
-            50
-          );
+          ctx.translate(Math.min(Math.max(state.ball.x, 30), canvas.width - 30), 50);
           const pulse = 1 + Math.sin(Date.now() / 150) * 0.2;
           ctx.scale(pulse, pulse);
           ctx.fillStyle = "#fff";
@@ -760,27 +708,22 @@ const GameSandbox: FC = () => {
           hipX - 35 * state.scale,
           hipY - 20 * state.scale,
           70 * state.scale,
-          45 * state.scale
+          45 * state.scale,
         );
         ctx.fillStyle = "rgba(0,0,0,0.2)";
-        ctx.fillRect(
-          hipX - 1 * state.scale,
-          hipY,
-          2 * state.scale,
-          25 * state.scale
-        );
+        ctx.fillRect(hipX - 1 * state.scale, hipY, 2 * state.scale, 25 * state.scale);
         ctx.fillStyle = "#fff";
         ctx.fillRect(
           hipX - 32 * state.scale,
           hipY - 20 * state.scale,
           5 * state.scale,
-          45 * state.scale
+          45 * state.scale,
         );
         ctx.fillRect(
           hipX + 27 * state.scale,
           hipY - 20 * state.scale,
           5 * state.scale,
-          45 * state.scale
+          45 * state.scale,
         );
         ctx.fillStyle = "#D32F2F";
         if (ctx.roundRect)
@@ -789,14 +732,14 @@ const GameSandbox: FC = () => {
             hipY - 85 * state.scale,
             64 * state.scale,
             75 * state.scale,
-            8
+            8,
           );
         else
           ctx.rect(
             hipX - 32 * state.scale,
             hipY - 85 * state.scale,
             64 * state.scale,
-            75 * state.scale
+            75 * state.scale,
           );
         ctx.fill();
         ctx.fillStyle = "rgba(0,0,0,0.1)";
@@ -807,23 +750,11 @@ const GameSandbox: FC = () => {
         ctx.fill();
         ctx.fillStyle = "#e0ac69";
         ctx.beginPath();
-        ctx.arc(
-          hipX,
-          hipY - 95 * state.scale,
-          20 * state.scale,
-          0,
-          Math.PI * 2
-        );
+        ctx.arc(hipX, hipY - 95 * state.scale, 20 * state.scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#212121";
         ctx.beginPath();
-        ctx.arc(
-          hipX,
-          hipY - 98 * state.scale,
-          22 * state.scale,
-          Math.PI,
-          Math.PI * 2.2
-        );
+        ctx.arc(hipX, hipY - 98 * state.scale, 22 * state.scale, Math.PI, Math.PI * 2.2);
         ctx.fill();
       }
 
@@ -899,8 +830,7 @@ const GameSandbox: FC = () => {
     const state = stateRef.current;
 
     if (!state.audioCtx) {
-      state.audioCtx = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      state.audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
     if (state.audioCtx.state === "suspended") state.audioCtx.resume();
 
@@ -1054,18 +984,18 @@ const GameSandbox: FC = () => {
                         skin === "classic"
                           ? "radial-gradient(circle at 30% 30%, #fff 0%, #ddd 100%)"
                           : skin === "gold"
-                          ? "radial-gradient(circle at 30% 30%, #FFD700 0%, #FFA500 50%, #B8860B 100%)"
-                          : skin === "neon"
-                          ? "radial-gradient(circle at 50% 50%, #0ff 0%, #00f 70%, #808 100%)"
-                          : "radial-gradient(circle at 50% 30%, #FFFF00 0%, #FF6600 30%, #FF0000 70%, #990000 100%)",
+                            ? "radial-gradient(circle at 30% 30%, #FFD700 0%, #FFA500 50%, #B8860B 100%)"
+                            : skin === "neon"
+                              ? "radial-gradient(circle at 50% 50%, #0ff 0%, #00f 70%, #808 100%)"
+                              : "radial-gradient(circle at 50% 30%, #FFFF00 0%, #FF6600 30%, #FF0000 70%, #990000 100%)",
                       boxShadow:
                         skin === "neon"
                           ? "0 0 25px #0ff, 0 0 50px rgba(0,255,255,0.4)"
                           : skin === "fire"
-                          ? "0 0 25px #FF6600, 0 0 50px rgba(255,102,0,0.4)"
-                          : skin === "gold"
-                          ? "0 0 25px #FFD700, 0 0 50px rgba(255,215,0,0.4)"
-                          : "0 4px 15px rgba(0,0,0,0.4)",
+                            ? "0 0 25px #FF6600, 0 0 50px rgba(255,102,0,0.4)"
+                            : skin === "gold"
+                              ? "0 0 25px #FFD700, 0 0 50px rgba(255,215,0,0.4)"
+                              : "0 4px 15px rgba(0,0,0,0.4)",
                     }}
                   >
                     {skin === "classic" && (
@@ -1073,43 +1003,37 @@ const GameSandbox: FC = () => {
                         <div
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[#212121] rotate-0"
                           style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
                           }}
                         ></div>
                         <div
                           className="absolute top-[10%] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#212121]"
                           style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
                           }}
                         ></div>
                         <div
                           className="absolute bottom-[15%] left-[20%] w-3 h-3 bg-[#212121]"
                           style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
                           }}
                         ></div>
                         <div
                           className="absolute bottom-[15%] right-[20%] w-3 h-3 bg-[#212121]"
                           style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
                           }}
                         ></div>
                         <div
                           className="absolute top-[25%] left-[8%] w-2.5 h-2.5 bg-[#212121]"
                           style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
                           }}
                         ></div>
                         <div
                           className="absolute top-[25%] right-[8%] w-2.5 h-2.5 bg-[#212121]"
                           style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                            clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
                           }}
                         >
                           {" "}
@@ -1184,10 +1108,10 @@ const GameSandbox: FC = () => {
                       index === 0
                         ? "bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border-yellow-500/40"
                         : index === 1
-                        ? "bg-gradient-to-r from-gray-300/20 to-gray-400/10 border-gray-300/40"
-                        : index === 2
-                        ? "bg-gradient-to-r from-amber-700/20 to-amber-800/10 border-amber-700/40"
-                        : "bg-white/5 border-white/10"
+                          ? "bg-gradient-to-r from-gray-300/20 to-gray-400/10 border-gray-300/40"
+                          : index === 2
+                            ? "bg-gradient-to-r from-amber-700/20 to-amber-800/10 border-amber-700/40"
+                            : "bg-white/5 border-white/10"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -1196,10 +1120,10 @@ const GameSandbox: FC = () => {
                           index === 0
                             ? "bg-yellow-500 text-black"
                             : index === 1
-                            ? "bg-gray-300 text-black"
-                            : index === 2
-                            ? "bg-amber-700 text-white"
-                            : "bg-white/10 text-white/60"
+                              ? "bg-gray-300 text-black"
+                              : index === 2
+                                ? "bg-amber-700 text-white"
+                                : "bg-white/10 text-white/60"
                         }`}
                       >
                         {index + 1}
