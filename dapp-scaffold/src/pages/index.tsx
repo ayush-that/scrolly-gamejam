@@ -1,6 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { HomeView } from "../views";
+import dynamic from "next/dynamic";
+
+const HomeView = dynamic(() => import("../views").then((mod) => ({ default: mod.HomeView })), {
+  ssr: false,
+});
 
 const Home: NextPage = (props) => {
   return (
