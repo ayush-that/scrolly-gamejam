@@ -6,10 +6,10 @@ import { useRef, useEffect } from "react";
 
 export const HomeView: FC = () => {
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white items-center">
-      <main className="flex flex-1 items-stretch px-0 w-full max-w-[550px] mx-auto">
-        <div className="relative flex w-full flex-col overflow-hidden">
-          <div className="flex-1 max-h-[95vh] w-full">
+    <div className="flex min-h-screen flex-col bg-black text-white items-center w-full">
+      <main className="flex flex-1 items-stretch px-0 w-full max-w-[550px] mx-auto min-h-full">
+        <div className="relative flex w-full flex-col overflow-hidden min-h-full">
+          <div className="flex-1 w-full min-h-[95vh]">
             <GameSandbox />
           </div>
         </div>
@@ -935,7 +935,12 @@ const GameSandbox: FC = () => {
     <div
       ref={containerRef}
       className="relative w-full h-full font-['Teko',_sans-serif] bg-[#1a1a1a] overflow-hidden"
-      style={{ width: "100%", minWidth: "100%" }}
+      style={{
+        width: "100%",
+        minWidth: "100%",
+        height: "100%",
+        minHeight: "95vh",
+      }}
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600&display=swap');
