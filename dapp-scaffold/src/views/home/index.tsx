@@ -1,12 +1,12 @@
 // Next, React
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import pkg from "../../../package.json";
 
-// ❌ DO NOT EDIT ANYTHING ABOVE THIS LINE
+import { useRef, useEffect } from "react";
+
 export const HomeView: FC = () => {
   return (
     <div className="flex min-h-screen flex-col bg-black text-white items-center">
-      {/* MAIN – central game area (phone frame) */}
       <main className="flex flex-1 items-stretch px-0 w-full max-w-[550px] mx-auto">
         <div className="relative flex w-full flex-col overflow-hidden">
           <div className="flex-1 max-h-[95vh] w-full">
@@ -18,14 +18,10 @@ export const HomeView: FC = () => {
   );
 };
 
-// ✅ THIS IS THE ONLY PART YOU EDIT FOR THE JAM
-// Replace this entire GameSandbox component with the one AI generates.
-// Keep the name `GameSandbox` and the `FC` type.
 const GameSandbox: FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Game State (React state for UI)
   const [gameState, setGameState] = useState<"START" | "PLAYING" | "GAMEOVER">(
     "START"
   );
@@ -74,7 +70,6 @@ const GameSandbox: FC = () => {
     ballSkin: "classic" as "classic" | "gold" | "neon" | "fire",
   });
 
-  // Init Highscore and Leaderboard
   useEffect(() => {
     const saved = localStorage.getItem("pro_juggler_highscore");
     if (saved) {
@@ -87,7 +82,6 @@ const GameSandbox: FC = () => {
     }
   }, []);
 
-  // Main Game Loop Effect
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -99,12 +93,10 @@ const GameSandbox: FC = () => {
     const state = stateRef.current;
     let animationFrameId: number;
 
-    // Constants
     const GRAVITY = 0.18;
     const AIR_RESISTANCE = 0.992;
     const BOUNCE_DAMPING = 0.5;
 
-    // Audio
     const initAudio = () => {
       if (!state.audioCtx) {
         state.audioCtx = new (window.AudioContext ||
@@ -154,7 +146,6 @@ const GameSandbox: FC = () => {
       }
     };
 
-    // Helper functions
     const createBlast = (x: number, y: number) => {
       state.shockwaves.push({
         x,
@@ -260,13 +251,11 @@ const GameSandbox: FC = () => {
       }
     };
 
-    // Resize
     const resize = () => {
       const { width, height } = container.getBoundingClientRect();
       canvas.width = width;
       canvas.height = height;
 
-      // Adaptive scale for all device sizes
       let newScale = Math.min(canvas.width / 400, canvas.height / 750);
       newScale = Math.max(0.6, Math.min(newScale, 1.4));
       state.scale = newScale;
@@ -280,27 +269,22 @@ const GameSandbox: FC = () => {
 
       const footRestY = state.player.y + state.player.legLength;
 
-      // Perfectly Symmetrical Stance
       state.player.left.x = state.player.x - 35 * newScale;
       state.player.left.y = footRestY;
       state.player.right.x = state.player.x + 35 * newScale;
       state.player.right.y = footRestY;
     };
 
-    // Initial resize
     resize();
 
-    // Physics Logic
     const updatePlayer = () => {
       const { player, input, scale } = state;
 
-      // Body follows input quickly to reduce leg stretch
       let targetBodyX = canvas.width / 2;
       if (input.active) {
         targetBodyX = (canvas.width / 2) * 0.4 + input.x * 0.6;
       }
 
-      // Smooth but fast body movement
       player.x += (targetBodyX - player.x) * 0.3;
 
       const hipX = player.x;
@@ -308,12 +292,10 @@ const GameSandbox: FC = () => {
 
       const restingY = hipY + player.legLength;
 
-      // --- Left Foot (Passive/Symmetrical Logic) ---
       const restingLeftX = hipX - 35 * scale;
       let targetLX = restingLeftX;
       let targetLY = restingY;
 
-      // Constrain left leg
       let dxL = targetLX - hipX;
       let dyL = targetLY - hipY;
       let distL = Math.sqrt(dxL * dxL + dyL * dyL);
@@ -325,13 +307,11 @@ const GameSandbox: FC = () => {
         targetLY = hipY + dyL;
       }
 
-      // Instant follow
       player.left.x = targetLX;
       player.left.y = targetLY;
 
-      // --- Right Foot (Active) ---
       const restingRightX = hipX + 35 * scale;
-      const maxRightLegLength = player.legLength * 3; // Flexible length for right leg
+      const maxRightLegLength = player.legLength * 3;
 
       let targetRX = input.active ? input.x : restingRightX;
       let targetRY = input.active ? input.y : restingY;
@@ -340,14 +320,12 @@ const GameSandbox: FC = () => {
       let dyR = targetRY - hipY;
       let distR = Math.sqrt(dxR * dxR + dyR * dyR);
 
-      // Constrain right leg with extended reach
       if (distR > maxRightLegLength) {
         let constrainedDx = dxR;
         if (Math.abs(constrainedDx) > maxRightLegLength) {
           constrainedDx = Math.sign(constrainedDx) * maxRightLegLength;
         }
 
-        // y = sqrt(length^2 - x^2)
         let constrainedDy = Math.sqrt(
           Math.max(
             0,
@@ -361,12 +339,9 @@ const GameSandbox: FC = () => {
         targetRY = hipY + constrainedDy;
       }
 
-      // Allow leg to extend above hip level (no upward constraint)
-
       player.right.lastX = player.right.x;
       player.right.lastY = player.right.y;
 
-      // Instant follow
       player.right.x = targetRX;
       player.right.y = targetRY;
 
@@ -418,7 +393,7 @@ const GameSandbox: FC = () => {
 
           if (ball.vy < -2) {
             state.score++;
-            setScore(state.score); // Update React State
+            setScore(state.score);
           }
         }
       }
@@ -447,14 +422,16 @@ const GameSandbox: FC = () => {
               state.score.toString()
             );
           }
-          // Update leaderboard
           if (state.score > 0) {
             const savedLb = localStorage.getItem("pro_juggler_leaderboard");
             const lb: number[] = savedLb ? JSON.parse(savedLb) : [];
             lb.push(state.score);
             lb.sort((a, b) => b - a);
             const top10 = lb.slice(0, 10);
-            localStorage.setItem("pro_juggler_leaderboard", JSON.stringify(top10));
+            localStorage.setItem(
+              "pro_juggler_leaderboard",
+              JSON.stringify(top10)
+            );
             setLeaderboard(top10);
           }
         }
@@ -474,14 +451,11 @@ const GameSandbox: FC = () => {
       resolveFootCollision(state.player.right);
     };
 
-    // Draw
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw Stadium
       drawGradientRect(0, 0, canvas.width, canvas.height, "#1e3c72", "#2a5298");
 
-      // Background circles
       ctx.save();
       ctx.globalCompositeOperation = "screen";
       ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
@@ -491,17 +465,12 @@ const GameSandbox: FC = () => {
       ctx.fill();
       ctx.restore();
 
-      // Stands
       const standTop = canvas.height * 0.4;
       const standHeight = canvas.height * 0.4;
       ctx.fillStyle = "#111";
       ctx.fillRect(0, standTop, canvas.width, standHeight);
 
       ctx.fillStyle = "rgba(255,255,255,0.1)";
-      // Should optimization this, but kept simple
-      // Instead of randomizing every frame (flicker), we should cache or use simpler drawing
-      // For fidelity to original which re-drew 300 circles per frame randomly (flicker effect?)
-      // The original code re-randomizes cx/cy every frame, creating noise/crowd effect.
       for (let i = 0; i < 300; i++) {
         const cx = Math.random() * canvas.width;
         const cy = standTop + Math.random() * standHeight;
@@ -510,7 +479,6 @@ const GameSandbox: FC = () => {
         ctx.fill();
       }
 
-      // Pitch
       const pitchY = canvas.height * 0.8;
       drawGradientRect(
         0,
@@ -521,7 +489,6 @@ const GameSandbox: FC = () => {
         "#1B5E20"
       );
 
-      // Pitch stripes
       ctx.fillStyle = "rgba(0,0,0,0.05)";
       const stripeWidth = 50 * state.scale;
       for (let i = 0; i < canvas.width; i += stripeWidth * 2) {
@@ -536,7 +503,6 @@ const GameSandbox: FC = () => {
         ctx.fill();
       }
 
-      // Line
       ctx.strokeStyle = "rgba(255,255,255,0.8)";
       ctx.lineWidth = 4;
       ctx.beginPath();
@@ -544,18 +510,15 @@ const GameSandbox: FC = () => {
       ctx.lineTo(canvas.width, pitchY + 10);
       ctx.stroke();
 
-      // Game Loop
       if (state.gameState === "PLAYING" || state.gameState === "GAMEOVER") {
         updatePlayer();
         if (state.gameState === "PLAYING") checkCollision();
 
-        // Draw Player
         const hipX = state.player.x;
         const hipY = state.player.y;
         drawLeg(hipX, hipY, state.player.left, "#cba376");
         drawLeg(hipX, hipY, state.player.right, "#e0ac69");
 
-        // Torso
         ctx.fillStyle = "#0D47A1";
         ctx.fillRect(
           hipX - 35 * state.scale,
@@ -586,10 +549,8 @@ const GameSandbox: FC = () => {
           45 * state.scale
         );
 
-        // Head/Shirt
         ctx.fillStyle = "#D32F2F";
         ctx.beginPath();
-        // roundRect is not supported in all typescript libs yet, fallback or cast
         if (ctx.roundRect) {
           ctx.roundRect(
             hipX - 32 * state.scale,
@@ -637,7 +598,6 @@ const GameSandbox: FC = () => {
         );
         ctx.fill();
 
-        // Draw Ball with skin
         ctx.save();
         ctx.translate(state.ball.x, state.ball.y);
         ctx.rotate(state.ball.rotation);
@@ -646,7 +606,6 @@ const GameSandbox: FC = () => {
         const skin = state.ballSkin;
 
         if (skin === "classic") {
-          // Classic soccer ball
           const grad = ctx.createRadialGradient(-10, -10, 5, 0, 0, r);
           grad.addColorStop(0, "#fff");
           grad.addColorStop(1, "#ddd");
@@ -665,7 +624,6 @@ const GameSandbox: FC = () => {
             ctx.restore();
           }
         } else if (skin === "gold") {
-          // Gold ball
           const grad = ctx.createRadialGradient(-10, -10, 5, 0, 0, r);
           grad.addColorStop(0, "#FFD700");
           grad.addColorStop(0.5, "#FFA500");
@@ -674,7 +632,6 @@ const GameSandbox: FC = () => {
           ctx.beginPath();
           ctx.arc(0, 0, r, 0, Math.PI * 2);
           ctx.fill();
-          // Star pattern
           ctx.fillStyle = "#fff";
           for (let i = 0; i < 8; i++) {
             ctx.save();
@@ -688,7 +645,6 @@ const GameSandbox: FC = () => {
             ctx.restore();
           }
         } else if (skin === "neon") {
-          // Neon ball
           ctx.shadowBlur = 20;
           ctx.shadowColor = "#0ff";
           const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
@@ -700,7 +656,6 @@ const GameSandbox: FC = () => {
           ctx.arc(0, 0, r, 0, Math.PI * 2);
           ctx.fill();
           ctx.shadowBlur = 0;
-          // Glow rings
           ctx.strokeStyle = "rgba(255,255,255,0.5)";
           ctx.lineWidth = 2;
           ctx.beginPath();
@@ -710,7 +665,6 @@ const GameSandbox: FC = () => {
           ctx.arc(0, 0, r * 0.3, 0, Math.PI * 2);
           ctx.stroke();
         } else if (skin === "fire") {
-          // Fire ball
           const grad = ctx.createRadialGradient(0, -r * 0.3, 0, 0, 0, r);
           grad.addColorStop(0, "#FFFF00");
           grad.addColorStop(0.3, "#FF6600");
@@ -720,7 +674,6 @@ const GameSandbox: FC = () => {
           ctx.beginPath();
           ctx.arc(0, 0, r, 0, Math.PI * 2);
           ctx.fill();
-          // Flame details
           ctx.fillStyle = "rgba(255,255,0,0.6)";
           for (let i = 0; i < 6; i++) {
             ctx.save();
@@ -732,14 +685,12 @@ const GameSandbox: FC = () => {
           }
         }
 
-        // Highlight (all skins)
         ctx.fillStyle = "rgba(255,255,255,0.3)";
         ctx.beginPath();
         ctx.arc(-r * 0.3, -r * 0.3, r * 0.4, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
 
-        // Height Indicator
         if (state.ball.y < -state.ball.radius) {
           ctx.save();
           ctx.translate(
@@ -761,7 +712,6 @@ const GameSandbox: FC = () => {
           ctx.restore();
         }
 
-        // Shockwaves
         for (let i = state.shockwaves.length - 1; i >= 0; i--) {
           const s = state.shockwaves[i];
           s.radius += s.speed;
@@ -781,7 +731,6 @@ const GameSandbox: FC = () => {
           }
         }
 
-        // Particles
         for (let i = state.particles.length - 1; i >= 0; i--) {
           const p = state.particles[i];
           p.x += p.vx;
@@ -801,7 +750,6 @@ const GameSandbox: FC = () => {
         state.player.x = canvas.width / 2;
         updatePlayer();
 
-        // Draw Player Body (Duplicate logic, function reuse would be better but keeping inline for scope)
         const hipX = state.player.x;
         const hipY = state.player.y;
         drawLeg(hipX, hipY, state.player.left, "#cba376");
@@ -929,11 +877,8 @@ const GameSandbox: FC = () => {
     const onResizeWindow = () => resize();
 
     window.addEventListener("resize", onResizeWindow);
-    // Attaching to canvas mainly, but for mouse move drag from outside?
-    // Original attached to window. let's attach to window to be safe for drag
     window.addEventListener("mousemove", onMouseMove);
 
-    // Touch listeners on canvas is better to avoid scroll blocking on whole page
     canvas.addEventListener("touchstart", onTouchStart, { passive: false });
     canvas.addEventListener("touchmove", onTouchMove, { passive: false });
     canvas.addEventListener("touchend", onTouchEnd, { passive: false });
@@ -948,12 +893,11 @@ const GameSandbox: FC = () => {
       canvas.removeEventListener("touchend", onTouchEnd);
       canvas.removeEventListener("touchcancel", onTouchCancel);
     };
-  }, []); // Run once on mount
+  }, []);
 
   const resetGame = () => {
     const state = stateRef.current;
 
-    // Init Audio if not already
     if (!state.audioCtx) {
       state.audioCtx = new (window.AudioContext ||
         (window as any).webkitAudioContext)();
@@ -1011,9 +955,7 @@ const GameSandbox: FC = () => {
         </div>
       </div>
 
-      {/* Top Right Buttons */}
       <div className="absolute top-4 right-4 z-30 flex gap-3">
-        {/* Leaderboard Button */}
         <button
           onClick={() => setLeaderboardOpen(true)}
           className="w-12 h-12 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer pointer-events-auto border border-white/10 active:scale-95 transition-all"
@@ -1034,7 +976,6 @@ const GameSandbox: FC = () => {
           </svg>
         </button>
 
-        {/* Settings Gear Button */}
         <button
           onClick={() => setSettingsOpen(true)}
           className="w-12 h-12 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer pointer-events-auto border border-white/10 active:scale-95 transition-all"
@@ -1061,14 +1002,12 @@ const GameSandbox: FC = () => {
         </button>
       </div>
 
-      {/* Settings Modal */}
       {settingsOpen && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/85 flex flex-col items-center justify-center z-40 backdrop-blur-md px-6 animate-in fade-in duration-200">
           <h1 className="text-white text-5xl mb-8 uppercase tracking-widest text-center font-bold drop-shadow-xl font-['Teko']">
             Settings
           </h1>
 
-          {/* Sound Toggle */}
           <div className="w-full max-w-[300px] mb-8">
             <button
               onClick={() => {
@@ -1085,7 +1024,6 @@ const GameSandbox: FC = () => {
             </button>
           </div>
 
-          {/* Ball Skin Selection */}
           <div className="w-full max-w-[340px] mb-10">
             <p className="text-white/60 text-xl mb-4 uppercase tracking-widest text-center font-bold">
               Ball Skin
@@ -1125,31 +1063,71 @@ const GameSandbox: FC = () => {
                           : "0 4px 15px rgba(0,0,0,0.4)",
                     }}
                   >
-                    {/* Classic - Pentagon pattern */}
                     {skin === "classic" && (
                       <>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[#212121] rotate-0" style={{clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}></div>
-                        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#212121]" style={{clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}></div>
-                        <div className="absolute bottom-[15%] left-[20%] w-3 h-3 bg-[#212121]" style={{clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}></div>
-                        <div className="absolute bottom-[15%] right-[20%] w-3 h-3 bg-[#212121]" style={{clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}></div>
-                        <div className="absolute top-[25%] left-[8%] w-2.5 h-2.5 bg-[#212121]" style={{clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}></div>
-                        <div className="absolute top-[25%] right-[8%] w-2.5 h-2.5 bg-[#212121]" style={{clipPath: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)"}}></div>
+                        <div
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[#212121] rotate-0"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                          }}
+                        ></div>
+                        <div
+                          className="absolute top-[10%] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#212121]"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                          }}
+                        ></div>
+                        <div
+                          className="absolute bottom-[15%] left-[20%] w-3 h-3 bg-[#212121]"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                          }}
+                        ></div>
+                        <div
+                          className="absolute bottom-[15%] right-[20%] w-3 h-3 bg-[#212121]"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                          }}
+                        ></div>
+                        <div
+                          className="absolute top-[25%] left-[8%] w-2.5 h-2.5 bg-[#212121]"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                          }}
+                        ></div>
+                        <div
+                          className="absolute top-[25%] right-[8%] w-2.5 h-2.5 bg-[#212121]"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)",
+                          }}
+                        >
+                          {" "}
+                        </div>
                       </>
                     )}
-                    {/* Gold - Star pattern */}
                     {skin === "gold" && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-6 h-6 bg-white/60" style={{clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"}}></div>
+                        <div
+                          className="w-6 h-6 bg-white/60"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+                          }}
+                        ></div>
                       </div>
                     )}
-                    {/* Neon - Concentric rings */}
                     {skin === "neon" && (
                       <>
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-white/50"></div>
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-white/50"></div>
                       </>
                     )}
-                    {/* Fire - Flame effect */}
                     {skin === "fire" && (
                       <>
                         <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2 h-4 bg-yellow-300/60 rounded-full"></div>
@@ -1158,7 +1136,6 @@ const GameSandbox: FC = () => {
                         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-2 h-3 bg-yellow-300/40 rounded-full"></div>
                       </>
                     )}
-                    {/* Highlight for all */}
                     <div className="absolute top-2 left-2 w-4 h-4 bg-white/30 rounded-full blur-[2px]"></div>
                   </div>
                   <span
@@ -1173,7 +1150,6 @@ const GameSandbox: FC = () => {
             </div>
           </div>
 
-          {/* Close Button */}
           <button
             onClick={() => setSettingsOpen(false)}
             className="bg-white text-black px-12 py-3 text-2xl rounded shadow-lg uppercase tracking-widest font-bold active:scale-95 transition-transform cursor-pointer hover:bg-gray-200"
@@ -1183,7 +1159,6 @@ const GameSandbox: FC = () => {
         </div>
       )}
 
-      {/* Leaderboard Modal */}
       {leaderboardOpen && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/85 flex flex-col items-center justify-center z-40 backdrop-blur-md px-6 animate-in fade-in duration-200">
           <h1 className="text-white text-5xl mb-6 uppercase tracking-widest text-center font-bold drop-shadow-xl font-['Teko']">
@@ -1192,7 +1167,9 @@ const GameSandbox: FC = () => {
 
           <div className="w-full max-w-[300px] mb-8">
             {leaderboard.length === 0 ? (
-              <p className="text-white/40 text-center text-lg">No scores yet. Play to set records!</p>
+              <p className="text-white/40 text-center text-lg">
+                No scores yet. Play to set records!
+              </p>
             ) : (
               <div className="space-y-2">
                 {leaderboard.map((lbScore, index) => (
@@ -1239,7 +1216,6 @@ const GameSandbox: FC = () => {
             )}
           </div>
 
-          {/* Close Button */}
           <button
             onClick={() => setLeaderboardOpen(false)}
             className="bg-white text-black px-12 py-3 text-2xl rounded shadow-lg uppercase tracking-widest font-bold active:scale-95 transition-transform cursor-pointer hover:bg-gray-200"
